@@ -1,0 +1,81 @@
+import cv2 as cv
+import os
+
+#the main path
+directory = r"D:\dataset\ai1"
+
+#automaticly delete all file which are not jpg
+def autofilter_image_by_format():
+    for folder in os.listdir(directory):
+        folder_path = os.path.join(directory,folder)
+        i = 0
+
+        for file in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file)
+            # Delete all non .jpg file
+
+            if os.path.isfile(file_path):
+                file_extension = os.path.splitext(file_path)[1]
+                if file_extension != ".jpg":
+                    os.remove(file_path)
+                else:
+                    print("miau")
+                    #Change all files name
+                    name = "{}{}{}{}".format(folder_path, "\image ", i, ".jpg")
+                    i += 1
+                    os.rename(file_path, name)
+
+#show all images one by one
+def showAllImages():
+    for folder in os.listdir(directory):
+        folder_path = os.path.join(directory, folder)
+
+        for file in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file)
+
+            img = cv.imread(file_path)
+            img = cv.resize(img, (800,600), interpolation=cv.INTER_CUBIC)
+            cv.imshow('Image', img)
+
+            gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+            gray = cv.resize(gray, (800,600), interpolation=cv.INTER_CUBIC)
+            cv.imshow('Image GRAY', gray)
+
+            cv.waitKey(0)
+
+
+#create one folder per each name of a list
+def create_Folder():
+    list_category = ["goldfish", "wolf spider", "snail", "flamingo", "tiger", "radio", "school bus", "eggnog", "toilet tissue"]
+    for each_name in list_category:
+        sub_folder = os.path.join(directory, each_name)
+        os.mkdir(sub_folder)
+
+
+#allow all category has the same amount of files
+def delete_exceed_files():
+    list_count_files = []
+    for folder in os.listdir(directory):
+        i = 0
+        folder_path = os.path.join(directory, folder)
+        for file in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file)
+
+            #suppose all files are the same format
+            if os.path.isfile(file_path):
+                i += 1
+
+        list_count_files.append(i)
+
+    least = min(list_count_files)
+
+    for folder in os.listdir(directory):
+        count = 0
+        folder_path = os.path.join(directory, folder)
+        for file in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file)
+
+            if count > least:
+                os.remove(file_path)
+
+            count += 1
